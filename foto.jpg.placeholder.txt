@@ -1,0 +1,2 @@
+Reemplaza este archivo con tu foto real.
+Renombra tu foto como "foto.jpg" y colócala en esta carpeta assets/.
