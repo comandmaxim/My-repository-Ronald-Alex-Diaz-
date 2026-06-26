@@ -452,16 +452,6 @@
     /* ── REVEAL ── */
     .reveal { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s ease; }
     .reveal.visible { opacity: 1; transform: none; }
-
-    /* ── DELETE btn ── */
-    .btn-del {
-      font-family: var(--mono); font-size: 11px;
-      padding: 6px 12px; border-radius: 7px;
-      border: 1px solid #c0392b44; color: #e74c3c;
-      background: transparent; cursor: pointer;
-      transition: background .2s;
-    }
-    .btn-del:hover { background: #e74c3c18; }
   </style>
 </head>
 <body>
@@ -724,15 +714,6 @@ function dbPut(tarea) {
   });
 }
 
-function dbDelete(id) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction('tareas', 'readwrite');
-    const req = tx.objectStore('tareas').delete(id);
-    req.onsuccess = () => resolve();
-    req.onerror   = () => reject(req.error);
-  });
-}
-
 // ────────────────────────────────────────────
 // UTILS
 // ────────────────────────────────────────────
@@ -787,7 +768,6 @@ function renderAll() {
   document.getElementById('statDone').textContent  = String(total).padStart(2,'0');
 
   bindVisorBtns();
-  bindDelBtns();
   observeReveals();
 }
 
@@ -827,7 +807,6 @@ function renderCard(t) {
       </div>
       <div class="task-foot" style="padding-top:0; border-top:none;">
         ${foot}
-        <button class="btn-del" data-id="${t.id}">🗑</button>
       </div>
     </article>`;
 }
@@ -888,22 +867,6 @@ function bindVisorBtns() {
     };
   });
 }
-
-function bindDelBtns() {
-  document.querySelectorAll('.btn-del').forEach(btn => {
-    btn.onclick = async () => {
-      if (!confirm('¿Eliminar esta tarea?')) return;
-      await dbDelete(btn.dataset.id);
-      allTareas = allTareas.filter(t => t.id !== btn.dataset.id);
-      renderAll();
-      toast('✅ Tarea eliminada', 'ok');
-    };
-  });
-}
-
-document.querySelectorAll('.btn-dl').forEach(btn => {
-  // delegated below
-});
 
 document.getElementById('visorClose').onclick = cerrarVisor;
 document.getElementById('visorOverlay').onclick = e => { if (e.target === e.currentTarget) cerrarVisor(); };
